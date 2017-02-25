@@ -21,19 +21,19 @@ class Color:
     # The following link is a pretty good resources for color values:
     # http://www.calmar.ws/vim/color-output.png
 
-    PATH_BG = 237  # dark grey
+    PATH_BG = 239  # dark grey
     PATH_FG = 250  # light grey
     CWD_FG = 254  # nearly-white grey
     SEPARATOR_FG = 244
 
-    REPO_CLEAN_BG = 148  # a light green color
+    REPO_CLEAN_BG = 33  # a light green color
     REPO_CLEAN_FG = 0  # black
-    REPO_DIRTY_BG = 161  # pink/red
-    REPO_DIRTY_FG = 15  # white
+    REPO_DIRTY_BG = 172  # pink/red
+    REPO_DIRTY_FG = 232  # dark grey (nearly black)
 
     CMD_PASSED_BG = 236
     CMD_PASSED_FG = 15
-    CMD_FAILED_BG = 161
+    CMD_FAILED_BG = 52
     CMD_FAILED_FG = 15
 
     SVN_CHANGES_BG = 148
@@ -46,8 +46,8 @@ class Color:
 class Powerline:
     symbols = {
         'compatible': {
-            'separator': '\u25B6',
-            'separator_thin': '\u276F'
+            'separator': '\ue0cc',
+            'separator_thin': '\ue0cc'
         },
         'patched': {
             'separator': '\u2B80',
@@ -87,7 +87,7 @@ class Powerline:
 
     def draw(self):
         return (''.join((s[0].draw(self, s[1]) for s in zip(self.segments, self.segments[1:] + [None])))
-                + self.reset)
+                + self.reset + ' ')
 
 
 class Segment:
@@ -129,12 +129,12 @@ def add_cwd_segment(powerline, cwd, maxdepth, cwd_only=False, hostname=False):
         names = names[:2] + ['⋯ '] + names[2 - maxdepth:]
 
     if hostname:
-        powerline.append(Segment(powerline, ' %m ' , Color.CWD_FG, Color.PATH_BG, powerline.separator_thin, Color.SEPARATOR_FG))
+        powerline.append(Segment(powerline, '%m' , Color.CWD_FG, Color.PATH_BG, '/', Color.SEPARATOR_FG))
 
     if not cwd_only:
         for n in names[:-1]:
-            powerline.append(Segment(powerline, ' %s ' % n, Color.PATH_FG, Color.PATH_BG, powerline.separator_thin, Color.SEPARATOR_FG))
-    powerline.append(Segment(powerline, ' %s ' % names[-1], Color.CWD_FG, Color.PATH_BG))
+            powerline.append(Segment(powerline, '%s' % n, Color.PATH_FG, Color.PATH_BG, '/', Color.SEPARATOR_FG))
+    powerline.append(Segment(powerline, '%s ' % names[-1], Color.CWD_FG, Color.PATH_BG))
 
 
 def get_hg_status():
@@ -220,7 +220,7 @@ def add_git_segment(powerline, cwd):
         bg = Color.REPO_DIRTY_BG
         fg = Color.REPO_DIRTY_FG
 
-    powerline.append(Segment(powerline, ' %s ' % branch, fg, bg))
+    powerline.append(Segment(powerline, '  %s ' % branch, fg, bg))
     return True
 
 
@@ -281,10 +281,12 @@ def add_virtual_env_segment(powerline, cwd):
 def add_root_indicator(powerline, error):
     bg = Color.CMD_PASSED_BG
     fg = Color.CMD_PASSED_FG
+    ch = '  ✓'
     if int(error) != 0:
         fg = Color.CMD_FAILED_FG
         bg = Color.CMD_FAILED_BG
-    powerline.append(Segment(powerline, ' ❄', fg, bg))
+        ch = '  ✕'
+    powerline.append(Segment(powerline, ch, fg, bg))
 
 
 def get_valid_cwd():
@@ -337,7 +339,7 @@ if __name__ == '__main__':
     p = Powerline(mode=args.m)
     cwd = get_valid_cwd()
     add_virtual_env_segment(p, cwd)
-    add_cwd_segment(p, cwd, 5, args.cwd_only, args.hostname)
+    add_cwd_segment(p, cwd, 4, args.cwd_only, args.hostname)
     add_repo_segment(p, cwd)
     add_root_indicator(p, args.prev_error)
     if sys.version_info[0] < 3:
