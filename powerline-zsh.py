@@ -188,7 +188,9 @@ def get_git_status():
             elif origin_status[0][0] == 'ahead':
                 origin_position += '⇡'
 
-        if line.find('nothing to commit') >= 0:
+        if line.find('no changes added to commit') >= 0 or \
+            line.find('nothing added to commit') >= 0 or \
+            line.find('nothing to commit') >= 0:
             has_pending_commits = False
         if line.find('Untracked files') >= 0:
             has_untracked_files = True
