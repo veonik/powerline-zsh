@@ -117,6 +117,7 @@ class Segment:
 def add_cwd_segment(powerline, cwd, maxdepth, cwd_only=False, hostname=False):
     home = os.getenv('HOME')
     cwd = os.getenv('PWD')
+    _, columns = os.popen('stty size', 'r').read().split()
 
     if cwd.find(home) == 0:
         cwd = cwd.replace(home, '~', 1)
@@ -126,7 +127,10 @@ def add_cwd_segment(powerline, cwd, maxdepth, cwd_only=False, hostname=False):
 
     names = cwd.split('/')
     if len(names) > maxdepth:
-        names = names[:2] + ['⋯ '] + names[2 - maxdepth:]
+        if int(columns) < 80:
+            names = names[:1] + ['⋯'] + names[-1:]
+        else:
+            names = names[:2] + ['⋯'] + names[2 - maxdepth:]
 
     if hostname:
         powerline.append(Segment(powerline, '%m' , Color.CWD_FG, Color.PATH_BG, '/', Color.SEPARATOR_FG))
