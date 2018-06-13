@@ -205,7 +205,9 @@ def add_git_segment(powerline, cwd):
     p = subprocess.Popen(['git', 'symbolic-ref', '-q', 'HEAD'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = p.communicate()
 
-    if 'Not a git repo' in err.decode(encoding):
+    errmsg = err.decode(encoding)
+    if 'not a git repo' in errmsg or \
+        'Not a git repo' in errmsg:
         return False
 
     if out:
