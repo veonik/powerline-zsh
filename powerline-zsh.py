@@ -46,20 +46,20 @@ class Color:
 class Powerline:
     symbols = {
         'compatible': {
-            'separator': '\ue0cc',
-            'separator_thin': '\ue0cc'
+            'separator': '|',
+            'separator_thin': '|'
         },
         'patched': {
-            'separator': '\u2B80',
-            'separator_thin': '\u2B81'
+            'separator': '\uE0A2',
+            'separator_thin': '\uE0A2'
         },
         'konsole': {
             'separator': '\ue0b0',
             'separator_thin': '\ue0b1'
         },
         'default': {
-            'separator': '⮀',
-            'separator_thin': '⮁'
+            'separator': '|',
+            'separator_thin': '|'
         }
     }
     LSQESCRSQ = '\\[\\e%s\\]'
@@ -226,7 +226,7 @@ def add_git_segment(powerline, cwd):
         bg = Color.REPO_DIRTY_BG
         fg = Color.REPO_DIRTY_FG
 
-    powerline.append(Segment(powerline, '  %s ' % branch, fg, bg))
+    powerline.append(Segment(powerline, ' %s ' % branch, fg, bg))
     return True
 
 
